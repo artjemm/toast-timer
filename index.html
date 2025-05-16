@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Toast Timer</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" />
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="window">
+    <div class="title-bar">
+      <span>Toast Timer</span>
+      <div class="title-bar-buttons">
+        <div class="button">
+          <img src="mini.png" alt="mini" />
+        </div>
+        <div class="button">
+          <img src="exit.png" alt="exit" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Start Screen -->
+    <div class="screen start-screen active">
+      <p class="text-time" style="text-align:center">Lets time your toast!</p>
+      <button class="start-button" onclick="goToSelection()">start</button>
+    </div>
+
+    <!-- Selection Screen -->
+    <div class="screen selection-screen">
+      <div class="text-toast">
+        <p style="text-align:center">What are you making today? </p>
+      </div>
+      <div class="toast-box">
+        <div class="toast1 toast-option" data-minutes="4" data-img="toast1.png">
+          <img src="toast1.png" class="toast-img" alt="Soft Toast" />
+          <p class="name-toast">Soft Toast</p>
+        </div>
+        <div class="toast2 toast-option" data-minutes="6" data-img="toast2.png">
+          <img src="toast2.png" class="toast-img" alt="Golden Crunch" />
+          <p class="name-toast">Golden Crunch</p>
+        </div>
+        <div class="toast3 toast-option" data-minutes="8" data-img="toast3.png">
+          <img src="toast3.png" class="toast-img" alt="Crispy Bite" />
+          <p class="name-toast">Crispy Bite</p>
+        </div>
+        <div class="toast4 toast-option" data-minutes="10" data-img="toast4.png">
+          <img src="toast4.png" class="toast-img" alt="Charcoal Edge" />
+          <p class="name-toast">Charcoal Edge</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timer Screen -->
+    <div class="screen timer-screen">
+      <button class="back-button" onclick="goBack()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="icon">
+          <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+      <p id="toast-label">your toast is ready in..</p>
+      <img src="" class="toast-img" id="toast-img" alt="Toast" />
+      <div class="timer" id="timer">0:00</div>
+    </div>
+  </div>
+
+  <script>
+    const options = document.querySelectorAll(".toast1, .toast2, .toast3, .toast4");
+    const startScreen = document.querySelector(".start-screen");
+    const selectionScreen = document.querySelector(".selection-screen");
+    const timerScreen = document.querySelector(".timer-screen");
+
+    const timerDisplay = document.getElementById("timer");
+    const toastImg = document.getElementById("toast-img");
+    const toastLabel = document.getElementById("toast-label");
+
+    let timerInterval;
+
+    function switchScreen(target) {
+      [startScreen, selectionScreen, timerScreen].forEach(screen =>
+        screen.classList.remove("active")
+      );
+      target.classList.add("active");
+    }
+
+    function goToSelection() {
+      switchScreen(selectionScreen);
+    }
+
+    function goBack() {
+      clearInterval(timerInterval);
+      switchScreen(selectionScreen);
+    }
+
+    function startTimerWithOption(option) {
+      const minutes = parseInt(option.dataset.minutes);
+      const finalImgSrc = option.dataset.img;
+
+      clearInterval(timerInterval);
+
+      toastImg.src = "toaster.png";
+      toastLabel.textContent = "Your toast is ready in..";
+
+      // Adiciona classes para aumentar e fazer a torradeira tremer
+      toastImg.classList.add("toaster-img", "shake");
+
+      switchScreen(timerScreen);
+
+      let totalSeconds = minutes * 60;
+      updateTimerDisplay(totalSeconds);
+
+      timerInterval = setInterval(() => {
+        totalSeconds--;
+
+        if (totalSeconds <= 0) {
+          clearInterval(timerInterval);
+          timerDisplay.textContent = "Done!";
+          toastImg.src = finalImgSrc;
+          toastLabel.textContent = "Your toast is ready!";
+
+          // Remove classes para voltar ao tamanho normal e parar de tremer
+          toastImg.classList.remove("toaster-img", "shake");
+        } else {
+          updateTimerDisplay(totalSeconds);
+        }
+      }, 1000);
+    }
+    function updateTimerDisplay(seconds) {
+      const min = Math.floor(seconds / 60);
+      const sec = seconds % 60;
+      timerDisplay.textContent = `${min}:${sec.toString().padStart(2, "0")}`;
+    }
+
+    options.forEach(option => {
+      option.addEventListener("click", () => startTimerWithOption(option));
+    });
+
+    window.goToSelection = goToSelection;
+    window.goBack = goBack;
+  </script>
+</body>
+
+</html>
