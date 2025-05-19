@@ -1,8 +1,6 @@
-@font-face {
-  font-family: "retro";
-  src: url("retro.ttf") format("truetype");
+body {
+  font-family: 'Pixelify Sans', sans-serif;
 }
-
 body {
   margin: 0;
   background-color: #1e1e1e;
